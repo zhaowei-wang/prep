@@ -11,6 +11,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "hash_table.hpp"
+
 void longest_word_in_string()
 {
     std::string search_string = "abppplee";
@@ -105,8 +107,36 @@ void maxSpan()
     printf("\nThe longest span length is %ld, of number %ld.\n", max_span, max_span_int);
 }
 
-int main(int argc, const char * argv[]) {
+int count_pairs(std::string s)
+{
+    int count = 0;
+    for (int i = 0; i < s.length(); ++i) for (int j = i+1; j < s.length(); ++j)
+        if (s[i] == 'A' && s[j] == 'B')
+            count += 1;
     
-    maxSpan();
+    return count;
+}
+
+std::string createString(int N, int K)
+{
+    int max_pairs = (N % 2) ? N/2 * (N/2 + 1) : N*N/4;
+    if (K > max_pairs) return "";
+    if (K == max_pairs)
+        return (N % 2) ? std::string(N/2, 'A') + std::string(N/2+1, 'B') \
+                       : std::string(N/2, 'A') + std::string(N/2, 'B');
+    
+    std::string s = std::string(N, 'B');
+    int i = 0;
+    while (K != count_pairs(s))
+    {
+        s[i++] = 'A';
+        if (K < count_pairs(s)) s[i-1] = 'B';
+    }
+        
+    return s;
+}
+
+int main(int argc, const char * argv[]) {
+    std::cout << createString(10,12) << "\n";
     return 0;
 }
