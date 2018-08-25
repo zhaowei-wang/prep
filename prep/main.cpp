@@ -11,7 +11,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "hash_table.hpp"
+#include "arrays_and_strings.h"
 
 void longest_word_in_string()
 {
@@ -137,6 +137,10 @@ std::string createString(int N, int K)
 }
 
 int main(int argc, const char * argv[]) {
-    std::cout << createString(10,12) << "\n";
+    arrays_and_strings::is_unique("abcadef");
+    arrays_and_strings::is_unique("abcef");
+    arrays_and_strings::is_permutation("abcd", "b");
+    arrays_and_strings::is_permutation("abcd", "bcd a");
+    arrays_and_strings::palindrome_permutation("taco cat");
     return 0;
 }
