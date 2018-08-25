@@ -11,7 +11,9 @@
 #include <vector>
 #include <unordered_map>
 
+
 #include "arrays_and_strings.h"
+#include "peak_finding.h"
 
 void longest_word_in_string()
 {
@@ -144,5 +146,7 @@ int main(int argc, const char * argv[]) {
     arrays_and_strings::palindrome_permutation("tcao cat");
     arrays_and_strings::string_compression("aaaaaabbc");
     arrays_and_strings::string_compression2("aaaaaabbc");
+    
+    test_peak_finding_1d();
     return 0;
 }
