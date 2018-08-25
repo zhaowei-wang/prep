@@ -141,6 +141,8 @@ int main(int argc, const char * argv[]) {
     arrays_and_strings::is_unique("abcef");
     arrays_and_strings::is_permutation("abcd", "b");
     arrays_and_strings::is_permutation("abcd", "bcd a");
-    arrays_and_strings::palindrome_permutation("taco cat");
+    arrays_and_strings::palindrome_permutation("tcao cat");
+    arrays_and_strings::string_compression("aaaaaabbc");
+    arrays_and_strings::string_compression2("aaaaaabbc");
     return 0;
 }

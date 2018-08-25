@@ -13,6 +13,9 @@
 #include <string>
 #include <set>
 #include <unordered_map>
+#include <list>
+#include <memory>
+#include <math.h>
 
 // C string library
 #include "string.h"
@@ -85,6 +88,87 @@ public:
             std::cout << "string=" << s << " is not a permutation of a palindrome." << std::endl;
         }
         
+    }
+    
+    static inline void string_compression(std::string s)
+    {
+        if (s.length() < 2) std::cout << "string=" << s << " is shortest." << std::endl;
+        
+        struct char_node
+        {
+            char c;
+            size_t count;
+            char_node() = delete;
+            char_node(char _c, size_t _count) : c(_c), count(_count) {};
+            void inc() { count++; }
+        };
+        
+        std::list<std::unique_ptr<char_node>> l;
+        auto it = l.begin();
+        for (auto c = s.begin(); c < s.end(); ++c)
+        {
+            if (l.size() == 0 || (*it)->c != *c)
+            {
+                l.push_back(std::make_unique<char_node>(*c, 1));
+                it++;
+            }
+            else
+            {
+                (*it)->inc();
+            }
+            
+        }
+        
+        std::string result = "";
+        for (auto it = l.begin(); it != l.end(); ++it)
+        {
+            result += (*it)->c;
+            result += std::to_string((*it)->count);
+        }
+        
+        if (result.size() > s.size())
+        {
+            std::cout << "string=" << s << " is shortest." << std::endl;
+        }
+        else
+        {
+            std::cout << "string=" << s << " is compressed to " << result << "." << std::endl;
+        }
+    }
+    
+    static inline void string_compression2(std::string s)
+    {
+        if (s.length() < 2) std::cout << "string=" << s << " is shortest." << std::endl;
+        
+        std::string result = "";
+        
+        char curr_c = s.at(0);
+        size_t count = 0;
+        result += curr_c;
+        for (size_t i = 0; i < s.length(); ++i)
+        {
+            if (s.at(i) == curr_c)
+            {
+                count++;
+            }
+            else
+            {
+                result += std::to_string(count);
+                curr_c = s.at(i);
+                result += curr_c;
+                count = 1;
+            }
+        }
+        result += std::to_string(count);
+        
+        if (result.size() > s.size())
+        {
+            std::cout << "string=" << s << " is shortest." << std::endl;
+        }
+        else
+        {
+            std::cout << "string=" << s << " is compressed to " << result << "." << std::endl;
+        }
     }
 };
 
