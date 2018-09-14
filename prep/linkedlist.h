@@ -25,7 +25,7 @@ template <typename T>
 class LinkedList
 {
 public:
-    LinkedList() : head(nullptr) { std::cout << "LinkedList()!" << std::endl; };
+    LinkedList() : head(nullptr), tail(nullptr) { std::cout << "LinkedList()!" << std::endl; };
     ~LinkedList()
     {
         Node<T> *n;
@@ -39,24 +39,53 @@ public:
     
     inline void push_back(T d)
     {
-        if (!head)
+        if (!tail)
         {
-            head = new Node<T>(d);
+            tail = new Node<T>(d);
+            if (!head)
+                head = tail;
             return;
         }
         
-        Node<T> *n = head;
-        while (n->next)
-            n = n->next;
-        
-        n->next = new Node<T>(d);
+        Node<T> n = new Node<T>(d);
+        tail->next = n;
+        tail = n;
     }
     
     inline void push_front(T d)
     {
+        if (!head)
+        {
+            head = new Node<T>(d);
+            if (!tail)
+                tail = head;
+            return;
+        }
+        
         Node<T> *n = new Node<T>(d);
         n->next = head;
         head = n;
+    }
+    
+    inline T pop_front()
+    {
+        
+        return T();
+    }
+    
+    inline T pop_back()
+    {
+        return T();
+    }
+    
+    inline T peek_front()
+    {
+        return T();
+    }
+    
+    inline T peek_back()
+    {
+        return T();
     }
     
     inline bool remove(T d)
@@ -181,6 +210,74 @@ public:
         return true;
     }
     
+    inline void partition(T pivot)
+    {
+        if (!head || !head->next)
+            return;
+        
+        Node<T> *new_head = head;
+        Node<T> *tail = new_head;
+        Node<T> *next = nullptr;
+        head = head->next;
+        
+        while (head)
+        {
+            next = head->next;
+            
+            if (head->data < pivot)
+            {
+                move_to_front(head, new_head);
+            }
+            else if (head->data >= pivot)
+            {
+                move_to_back(head, tail);
+            }
+            
+            head = next;
+        }
+        
+        head = new_head;
+    }
+    
+    inline T sum_lists_reverseorder(LinkedList *l)
+    {
+        T sum = 0;
+        size_t mag = 0;
+        size_t s1, s2;
+        
+        Node<T> *n1 = l->head;
+        Node<T> *n2 = head;
+        
+        while (n1 || n2)
+        {
+            s1 = 0;
+            s2 = 0;
+            
+            if (n1)
+            {
+                s1 = n1->data + 10 * mag;
+                n1 = n1->next;
+            }
+            
+            if (n2)
+            {
+                s2 = n2->data + 10 * mag;
+                n2 = n2->next;
+            }
+            
+            sum += s1 + s2;
+            mag++;
+        }
+        
+        return sum;
+    }
+    
+    inline bool is_palindrome()
+    {
+        size_t count = 0;
+        return is_palindrome_internal(head, count);
+    }
+    
     inline void print()
     {
         Node<T> *n = head;
@@ -192,8 +289,12 @@ public:
         std::cout << std::endl;
     }
     
-private:
+protected:
     Node<T> *head;
+    Node<T> *tail;
+    
+private:
+    
     
     inline Node<T> * kth_to_last_internal(Node<T> *node, size_t k, size_t& counter)
     {
@@ -209,6 +310,47 @@ private:
         
         counter++;
         return nullptr;
+    }
+    
+    inline void move_to_front(Node<T> *node, Node<T> *&head)
+    {
+        node->next = head;
+        head = node;
+    }
+    
+    inline void move_to_back(Node<T> *node, Node<T> *&tail)
+    {
+        tail->next = node;
+        tail = node;
+    }
+    
+    inline bool is_palindrome_internal(Node<T> *node, size_t& count)
+    {
+        if (!node)
+        {
+            count = 0;
+            return true;
+        }
+        
+        bool is_pal = is_palindrome_internal(node->next, count);
+        
+        if (!is_pal)
+            return false;
+        
+        Node<T> *runner = head;
+        for (size_t i = 0; i < count; ++i)
+            runner = runner->next;
+        
+        count++;
+        if (runner->data == node->data)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
     }
 };
 
@@ -233,13 +375,41 @@ void test_linked_list()
     l.push_back(0);
     l.push_back(1);
     l.push_back(1);
+    l.push_back(8);
+    l.push_back(4);
+    l.push_back(32);
+    l.push_back(15);
+    l.push_back(29);
     l.print();
     l.remove_dup_inplace();
     l.print();
     
-    size_t k = 3;
+    size_t k = 1;
     Node<int> *node = l.kth_to_last(k);
     std::cout << k << " to last = " << node->data << std::endl;
+    
+    l.print();
+    l.partition(15);
+    l.print();
+    
+    LinkedList<int> l1;
+    l1.push_back(0);
+    l1.push_back(1);
+    
+    LinkedList<int> l2;
+    l2.push_back(0);
+    
+    std::cout << "Sum of lists = " << l1.sum_lists_reverseorder(&l2) << std::endl;
+    
+    LinkedList<char> l3;
+    l3.push_back('c');
+    l3.push_back('a');
+    l3.push_back('b');
+    l3.push_back('b');
+    l3.push_back('a');
+    l3.push_back('c');
+    
+    std::cout << "Is palindrome = " << l3.is_palindrome() << std::endl;
     
 }
 
