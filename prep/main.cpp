@@ -15,6 +15,7 @@
 #include "arrays_and_strings.h"
 #include "peak_finding.h"
 #include "linkedlist.h"
+#include "queue_and_stack.h"
 
 void longest_word_in_string()
 {
@@ -142,6 +143,8 @@ std::string createString(int N, int K)
 int main(int argc, const char * argv[]) {
 //    test_arrays_and_strings();
 //    test_peak_finding_1d();
-    test_linked_list();
+//    test_linked_list();
+    test_queue();
+    test_stack();
     return 0;
 }

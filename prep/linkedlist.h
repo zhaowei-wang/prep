@@ -11,14 +11,17 @@
 
 #include <iostream>
 #include <set>
+#include <stdexcept>
 
 template <typename T>
 struct Node
 {
     T data;
     Node *next;
+    Node *prev;
     
-    Node(T d) : data(d), next(nullptr) { std::cout << "Node()!" << std::endl; };
+    Node(T d) : data(d), next(nullptr), prev(nullptr) { std::cout << "Node()!" << std::endl; };
+    Node(T d, Node *next, Node *prev) : data(d), next(next), prev(prev) { std::cout << "Node()!" << std::endl; };
 };
 
 template <typename T>
@@ -47,7 +50,7 @@ public:
             return;
         }
         
-        Node<T> n = new Node<T>(d);
+        Node<T> *n = new Node<T>(d, nullptr, tail);
         tail->next = n;
         tail = n;
     }
@@ -62,30 +65,50 @@ public:
             return;
         }
         
-        Node<T> *n = new Node<T>(d);
-        n->next = head;
+        Node<T> *n = new Node<T>(d, head, nullptr);
+        head->prev = n;
         head = n;
     }
     
     inline T pop_front()
     {
+        if (!head)
+            throw std::out_of_range("Trying to pop_front from empty head.");
         
-        return T();
+        if (tail == head)
+            tail = nullptr;
+        
+        T val = head->data;
+        Node<T> *n = head;
+        head = head->next;
+        head->prev = nullptr;
+        delete n;
+        
+        return val;
     }
     
     inline T pop_back()
     {
-        return T();
+        if (!tail)
+            throw std::out_of_range("Trying to pop_back from empty tail.");
+        
+        T val = tail->data;
+        Node<T> *n = tail;
+        tail = tail->prev;
+        tail->next = nullptr;
+        delete n;
+        
+        return val;
     }
     
     inline T peek_front()
     {
-        return T();
+        return head->data;
     }
     
     inline T peek_back()
     {
-        return T();
+        return tail->data;
     }
     
     inline bool remove(T d)
@@ -146,6 +169,7 @@ public:
             {
                 to_del = node_runner;
                 node_runner_prev->next = node_runner->next;
+                node_runner->next->prev = node_runner_prev;
                 delete to_del;
             }
             
@@ -174,6 +198,7 @@ public:
                 {
                     to_del = node_runner;
                     node_runner_prev->next = node_runner->next;
+                    node_runner->next->prev = node_runner_prev;
                     delete to_del;
                 }
                 else
@@ -278,13 +303,24 @@ public:
         return is_palindrome_internal(head, count);
     }
     
-    inline void print()
+    inline void print_forward()
     {
         Node<T> *n = head;
         while (n)
         {
             std::cout << "(" << n->data << ")";
             n = n->next;
+        }
+        std::cout << std::endl;
+    }
+    
+    inline void print_reverse()
+    {
+        Node<T> *n = tail;
+        while (n)
+        {
+            std::cout << "(" << n->data << ")";
+            n = n->prev;
         }
         std::cout << std::endl;
     }
@@ -361,11 +397,11 @@ void test_linked_list()
 //    l.push_front(2);
 //    l.push_front(3);
 //    l.push_back(0);
-//    l.print();
+//    l.print_forward();
 //    l.remove(3);
 //    l.remove(1);
 //    l.remove(0);
-//    l.print();
+//    l.print_forward();
     
     l.push_back(0);
     l.push_front(1);
@@ -380,27 +416,32 @@ void test_linked_list()
     l.push_back(32);
     l.push_back(15);
     l.push_back(29);
-    l.print();
+    l.print_forward();
     l.remove_dup_inplace();
-    l.print();
+    l.print_forward();
+    l.print_reverse();
+    l.pop_back();
+    l.pop_front();
+    l.print_forward();
+    l.print_reverse();
     
     size_t k = 1;
     Node<int> *node = l.kth_to_last(k);
     std::cout << k << " to last = " << node->data << std::endl;
-    
-    l.print();
+
+    l.print_forward();
     l.partition(15);
-    l.print();
-    
+    l.print_forward();
+
     LinkedList<int> l1;
     l1.push_back(0);
     l1.push_back(1);
-    
+
     LinkedList<int> l2;
     l2.push_back(0);
-    
+
     std::cout << "Sum of lists = " << l1.sum_lists_reverseorder(&l2) << std::endl;
-    
+
     LinkedList<char> l3;
     l3.push_back('c');
     l3.push_back('a');
@@ -408,7 +449,7 @@ void test_linked_list()
     l3.push_back('b');
     l3.push_back('a');
     l3.push_back('c');
-    
+
     std::cout << "Is palindrome = " << l3.is_palindrome() << std::endl;
     
 }
