@@ -268,6 +268,14 @@ private:
         
         return r;
     }
+    
+    // returns pointer to next largest value from val, otherwise returns nullptr
+    // if no node has value larger than val
+    tree_node<T> * next_largest_internal(T val)
+    {
+        
+        return nullptr;
+    }
 };
 
 void test_trees_and_graphs()
@@ -291,7 +299,7 @@ void test_trees_and_graphs()
     
     std::cout << btree.find(3) << std::endl;
     
-    btree2.remove(5);
+    btree2.remove(10);
     btree2.print();
 }
 
