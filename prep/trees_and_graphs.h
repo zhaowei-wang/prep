@@ -10,6 +10,7 @@
 #define trees_and_graphs_h
 
 #include <vector>
+#include <unordered_map>
 
 #pragma mark binary tree
 // binary tree node
@@ -140,20 +141,24 @@ public:
         insert_internal(binary_tree<T>::_root, val);
     }
     
-    bool remove(T val)
+    void remove(T val)
     {
-        tree_node<T> *ret = nullptr;
-        bool ok = find_internal(binary_tree<T>::_root, &ret, val);
-        if (!ok)
-            return false;
-        
-        
+        std::unordered_map<tree_node<T> *, tree_node<T> *> prev;
+        prev.insert({binary_tree<T>::_root, nullptr});
+        tree_node<T> *n = find_internal(binary_tree<T>::_root, &prev, val);
+        if (n)
+            remove_internal(n, prev);
     }
     
     bool find(T val)
     {
-        return find_internal(binary_tree<T>::_root, nullptr, val);
+        tree_node<T> *n = find_internal(binary_tree<T>::_root, nullptr, val);
+         if (!n)
+             return false;
+        
+        return true;
     }
+    
 private:
     void insert_internal(tree_node<T> *&curr, T val)
     {
@@ -174,32 +179,94 @@ private:
     }
     
     // finds val in tree, returns if found or not
-    bool find_internal(tree_node<T> *root, tree_node<T> **ret, T val) const
+    tree_node<T> * find_internal(tree_node<T> *root,
+                                 std::unordered_map<tree_node<T> *, tree_node<T> *> *prev,
+                                 T val) const
     {
         if (!root)
-            return false;
+            return nullptr;
         
         if (root->data == val)
         {
-            if (ret) *ret = root;
-            return true;
+            return root;
         }
         else if (root->data > val)
         {
-            return find_internal(root->left, ret, val);
+            if (prev)
+                (*prev)[root->left] = root;
+            return find_internal(root->left, prev, val);
         }
         else if (root->data < val)
         {
-            return find_internal(root->right, ret, val);
+            if (prev)
+                (*prev)[root->right] = root;
+            return find_internal(root->right, prev, val);
         }
         
-        return false;
+        return nullptr;
+    }
+    
+    // helper function, given a node to delete r, set the left or right child
+    // pointer from r's ancestor to next
+    void set_ancestor(tree_node<T> *r,
+                          const std::unordered_map<tree_node<T> *, tree_node<T> *> prev,
+                          tree_node<T> *next)
+    {
+        tree_node<T> *ancestor = prev.at(r);
+        if (ancestor)
+        {
+            bool is_left_child = (ancestor->left == r) ? true : false;
+            if (is_left_child)
+            {
+                ancestor->left = next;
+            }
+            else
+            {
+                ancestor->right = next;
+            }
+        }
     }
     
     // deletes curr from tree
-    void remove_internal(tree_node<T> *&curr)
+    void remove_internal(tree_node<T> *r,
+                         const std::unordered_map<tree_node<T> *, tree_node<T> *> prev)
     {
-       
+        if (!r->left && !r->right)
+        {
+            // delete r and fix dangling pointer
+            set_ancestor(r, prev, nullptr);
+            delete r;
+        }
+        else if (r->left && !r->right)
+        {
+            // delete r and make ancestor left or right point to r->left
+            set_ancestor(r, prev, r->left);
+            delete r;
+        }
+        else
+        {
+            // find min of right subtree, swap it with r and delete it
+            std::unordered_map<tree_node<T> *, tree_node<T> *> prev2;
+            prev2.insert({r->right, r});
+            tree_node<T> *min_node = min_node_internal(r->right, &prev2);
+            r->data = min_node->data;
+            remove_internal(min_node, prev2);
+        }
+    }
+    
+    tree_node<T> * min_node_internal(tree_node<T> *r,
+                                     std::unordered_map<tree_node<T> *, tree_node<T> *> *prev)
+    {
+        if (!r)
+            return nullptr;
+        
+        while (r->left)
+        {
+            (*prev).at(r->left) = r;
+            r = r->left;
+        }
+        
+        return r;
     }
 };
 
@@ -222,7 +289,10 @@ void test_trees_and_graphs()
     btree2.insert(2);
     btree2.print();
     
-    std::cout << btree.find(8) << std::endl;
+    std::cout << btree.find(3) << std::endl;
+    
+    btree2.remove(5);
+    btree2.print();
 }
 
 #endif /* trees_and_graphs_h */
