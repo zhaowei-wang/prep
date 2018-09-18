@@ -147,6 +147,8 @@ int main(int argc, const char * argv[]) {
 //    test_linked_list();
 //    test_queue();
 //    test_stack();
+//    test_set_of_stacks();
+//    test_queue_from_stacks();
     test_trees_and_graphs();
     return 0;
 }

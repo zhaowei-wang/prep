@@ -29,8 +29,21 @@ class LinkedList
 {
 public:
     LinkedList() : head(nullptr), tail(nullptr) { std::cout << "LinkedList()!" << std::endl; };
+    
+    LinkedList(const LinkedList& list) : head(nullptr), tail(nullptr)
+    {
+        copy_nodes(list);
+    }
+    
+    LinkedList& operator=(const LinkedList& list)
+    {
+        copy_nodes(list);
+        return *this;
+    }
+    
     ~LinkedList()
     {
+        std::cout << "~LinkedList()!" << std::endl;
         Node<T> *n;
         while (head)
         {
@@ -38,6 +51,11 @@ public:
             head = head->next;
             delete n;
         }
+    }
+    
+    inline bool is_empty()
+    {
+        return head == nullptr;
     }
     
     inline void push_back(T d)
@@ -81,7 +99,8 @@ public:
         T val = head->data;
         Node<T> *n = head;
         head = head->next;
-        head->prev = nullptr;
+        if (head)
+            head->prev = nullptr;
         delete n;
         
         return val;
@@ -95,7 +114,8 @@ public:
         T val = tail->data;
         Node<T> *n = tail;
         tail = tail->prev;
-        tail->next = nullptr;
+        if (tail)
+            tail->next = nullptr;
         delete n;
         
         return val;
@@ -330,7 +350,15 @@ protected:
     Node<T> *tail;
     
 private:
-    
+    void copy_nodes(const LinkedList& list)
+    {
+        Node<T> *runner = list.head;
+        while (runner)
+        {
+            push_back(runner->data);
+            runner = runner->next;
+        }
+    }
     
     inline Node<T> * kth_to_last_internal(Node<T> *node, size_t k, size_t& counter)
     {
