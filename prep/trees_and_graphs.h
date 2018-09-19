@@ -262,7 +262,8 @@ private:
         
         while (r->left)
         {
-            (*prev).at(r->left) = r;
+            if(prev)
+                (*prev).at(r->left) = r;
             r = r->left;
         }
         
@@ -271,8 +272,28 @@ private:
     
     // returns pointer to next largest value from val, otherwise returns nullptr
     // if no node has value larger than val
-    tree_node<T> * next_largest_internal(T val)
+    tree_node<T> * next_largest_internal(tree_node<T> *r,
+                                         std::unordered_map<tree_node<T> *, tree_node<T> *> *prev,
+                                         T val)
     {
+        if (!r)
+            return nullptr;
+        
+        // find the node that is the greatest lower bound to val, n
+        tree_node<T> *n = nullptr;
+        if (val < r->data)
+        {
+            prev->insert({r->left, r});
+            n = next_largest_internal(r->left, prev, val);
+        }
+        if (val > r->data)
+        {
+            prev->insert({r->right, r});
+            n = next_largest_internal(r->right, prev, val);
+        }
+        
+        // the next largest node is either an ancestor of n, or the minimum of
+        // n->right subtree
         
         return nullptr;
     }
