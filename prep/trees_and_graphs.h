@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <deque>
 
 #pragma mark binary tree
 // binary tree node
@@ -77,6 +78,27 @@ public:
             std::cout << "(" << n << ")";
         std::cout << std::endl;
     }
+    
+    void print_bfs()
+    {
+        std::vector<T> traversal;
+        
+        auto f = [&](tree_node<T> *r) {
+            traversal.push_back(r->data);
+        };
+        
+        auto p = [](tree_node<T> *r) -> bool {
+            return true;
+        };
+        
+        bfs_traversal(_root, f, p);
+        
+        std::cout << "binary tree traversal (bfs): ";
+        for (const auto& n : traversal)
+            std::cout << "(" << n << ")";
+        std::cout << std::endl;
+    }
+    
 protected:
     tree_node<T> *_root;
     
@@ -117,6 +139,25 @@ private:
         pre_order_traversal(root->right, f, p);
     }
     
+    template <class func, class pred>
+    void bfs_traversal(tree_node<T> *root, func f, pred p)
+    {
+        std::deque<tree_node<T> *> q;
+        q.push_front(root);
+        while (q.size() != 0)
+        {
+            tree_node<T> *curr = q.back();
+            q.pop_back();
+            if (p(curr))
+                f(curr);
+            
+            if (curr->left)
+                q.push_front(curr->left);
+            if (curr->right)
+                q.push_front(curr->right);
+        }
+    }
+    
     // copies a to b
     void copy_tree(const tree_node<T> *a, tree_node<T> *&b)
     {
@@ -135,6 +176,10 @@ class binary_search_tree : public binary_tree<T>
 public:
     binary_search_tree() : binary_tree<T>() {}
     binary_search_tree(tree_node<T> *r) : binary_tree<T>(r) {}
+    binary_search_tree(std::vector<T> sorted) : binary_tree<T>()
+    {
+        bst_from_sorted_array(sorted, 0, sorted.size());
+    }
     
     void insert(T val)
     {
@@ -157,6 +202,36 @@ public:
              return false;
         
         return true;
+    }
+    
+    T next_largest(T val)
+    {
+        std::unordered_map<tree_node<T> *, tree_node<T> *> prev;
+        prev.insert({binary_tree<T>::_root, nullptr});
+        tree_node<T> *n = find_internal(binary_tree<T>::_root, &prev, val);
+        if (!n)
+            return val;
+        
+        tree_node<T> *nn = next_largest_internal(n, prev);
+        if(!nn)
+            return val;
+        
+        return nn->data;
+    }
+    
+    T next_smallest(T val)
+    {
+        std::unordered_map<tree_node<T> *, tree_node<T> *> prev;
+        prev.insert({binary_tree<T>::_root, nullptr});
+        tree_node<T> *n = find_internal(binary_tree<T>::_root, &prev, val);
+        if (!n)
+            return val;
+        
+        tree_node<T> *nn = next_smallest_internal(n, prev);
+        if(!nn)
+            return val;
+        
+        return nn->data;
     }
     
 private:
@@ -270,32 +345,77 @@ private:
         return r;
     }
     
-    // returns pointer to next largest value from val, otherwise returns nullptr
-    // if no node has value larger than val
-    tree_node<T> * next_largest_internal(tree_node<T> *r,
-                                         std::unordered_map<tree_node<T> *, tree_node<T> *> *prev,
-                                         T val)
+    tree_node<T> * max_node_internal(tree_node<T> *r,
+                                     std::unordered_map<tree_node<T> *, tree_node<T> *> *prev)
     {
         if (!r)
             return nullptr;
         
-        // find the node that is the greatest lower bound to val, n
-        tree_node<T> *n = nullptr;
-        if (val < r->data)
+        while (r->right)
         {
-            prev->insert({r->left, r});
-            n = next_largest_internal(r->left, prev, val);
-        }
-        if (val > r->data)
-        {
-            prev->insert({r->right, r});
-            n = next_largest_internal(r->right, prev, val);
+            if(prev)
+                (*prev).at(r->right) = r;
+            r = r->right;
         }
         
-        // the next largest node is either an ancestor of n, or the minimum of
-        // n->right subtree
+        return r;
+    }
+    
+    // returns the pointer to the node that is next largest to r. r must belong
+    // to the bst
+    tree_node<T> * next_largest_internal(tree_node<T> *r,
+                                         const std::unordered_map<tree_node<T> *, tree_node<T> *> prev)
+    {
+        if (!r)
+            return nullptr;
         
-        return nullptr;
+        // If r has a right child, return the min node of the right subtree
+        if (r->right)
+            return min_node_internal(r->right, nullptr);
+        
+        // Otherwise, the next largest must be an ancestor. In particular the
+        // ancestor must be the smallest ancestor that contains r in its left subtree
+        tree_node<T> *anc = prev.at(r);
+        tree_node<T> *curr = r;
+        while (anc && anc->left != curr)
+        {
+            curr = anc;
+            anc = prev.at(anc);
+        }
+    
+        return anc;
+    }
+    
+    tree_node<T> * next_smallest_internal(tree_node<T> *r,
+                                         const std::unordered_map<tree_node<T> *, tree_node<T> *> prev)
+    {
+        if (!r)
+            return nullptr;
+        
+        if (r->left)
+            return max_node_internal(r->left, nullptr);
+        
+        tree_node<T> *anc = prev.at(r);
+        tree_node<T> *curr = r;
+        while (anc && anc->right != curr)
+        {
+            curr = anc;
+            anc = prev.at(anc);
+        }
+        
+        return anc;
+    }
+    
+    void bst_from_sorted_array(const std::vector<T>& sorted, size_t begin, size_t end)
+    {
+        if (begin == end)
+            return;
+        
+        size_t mid = begin + (end - begin) / 2;
+        insert(sorted.at(mid));
+        
+        bst_from_sorted_array(sorted, begin, mid);
+        bst_from_sorted_array(sorted, mid+1, end);
     }
 };
 
@@ -320,8 +440,17 @@ void test_trees_and_graphs()
     
     std::cout << btree.find(3) << std::endl;
     
-    btree2.remove(10);
-    btree2.print();
+//    btree2.remove(2);
+//    btree2.print();
+    
+    std::cout << btree2.next_largest(10) << std::endl;
+    std::cout << btree2.next_smallest(10) << std::endl;
+    
+    btree2.print_bfs();
+    
+    std::vector<int> sorted = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    binary_search_tree<int> btree3(sorted);
+    btree3.print_bfs();
 }
 
 #endif /* trees_and_graphs_h */
