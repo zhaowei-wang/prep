@@ -12,6 +12,7 @@
 #include <vector>
 #include <unordered_map>
 #include <deque>
+#include <cmath>
 
 #pragma mark binary tree
 // binary tree node
@@ -99,6 +100,27 @@ public:
         std::cout << std::endl;
     }
     
+    void print_depths()
+    {
+        std::unordered_map<size_t, std::vector<tree_node<T> *>> map;
+        list_of_depths_internal(_root, map, 0);
+        for (const auto& v : map)
+        {
+            std::cout << "Depth " << v.first << ":";
+            for (const auto& e : v.second)
+                std::cout << "(" << e->data << ")";
+            
+            std::cout << std::endl;
+        }
+        
+    }
+    
+    bool check_balanced()
+    {
+        int n = 0;
+        return check_balanced_internal(_root, n);
+    }
+    
 protected:
     tree_node<T> *_root;
     
@@ -155,6 +177,49 @@ private:
                 q.push_front(curr->left);
             if (curr->right)
                 q.push_front(curr->right);
+        }
+    }
+    
+    void list_of_depths_internal(tree_node<T> *r,
+                                 std::unordered_map<size_t, std::vector<tree_node<T> *>> &map,
+                                 size_t depth)
+    {
+        if (!r)
+            return;
+        
+        if (map.find(depth) == map.end())
+        {
+            map.insert({depth, {r}});
+        }
+        else
+        {
+            map.at(depth).push_back(r);
+        }
+        
+        ++depth;
+        list_of_depths_internal(r->left, map, depth);
+        list_of_depths_internal(r->right, map, depth);
+    }
+    
+    bool check_balanced_internal(const tree_node<T> *root, int &s)
+    {
+        if (!root) { s = 0; return true; }
+        
+        int ls, rs;
+        bool l_bal = check_balanced_internal(root->left, ls);
+        bool r_bal = check_balanced_internal(root->right, rs);
+        
+        if (!l_bal || !r_bal)
+            return false;
+        
+        if (std::abs(ls - rs) > 1)
+        {
+            return false;
+        }
+        else
+        {
+            s += ls + rs + 1;
+            return true;
         }
     }
     
@@ -424,11 +489,13 @@ void test_trees_and_graphs()
     tree_node<int> *r = new tree_node<int>(10);
     r->left = new tree_node<int>(5);
     r->right = new tree_node<int>(15);
-    r->left->left = new tree_node<int>(4);
-    r->left->left->left = new tree_node<int>(2);
+//    r->left->left = new tree_node<int>(4);
+//    r->left->left->left = new tree_node<int>(2);
     
     binary_search_tree<int> btree(r);
     btree.print();
+    btree.print_depths();
+    std::cout << btree.check_balanced() << std::endl;
     
     binary_search_tree<int> btree2;
     btree2.insert(10);
@@ -451,6 +518,9 @@ void test_trees_and_graphs()
     std::vector<int> sorted = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     binary_search_tree<int> btree3(sorted);
     btree3.print_bfs();
+    
+    btree3.print_depths();
+    std::cout << btree2.check_balanced() << std::endl;
 }
 
 #endif /* trees_and_graphs_h */
