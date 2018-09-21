@@ -206,6 +206,7 @@ private:
         if (!root) { s = 0; return true; }
         
         int ls, rs;
+        ls = rs = 0;
         bool l_bal = check_balanced_internal(root->left, ls);
         bool r_bal = check_balanced_internal(root->right, rs);
         
@@ -297,6 +298,11 @@ public:
             return val;
         
         return nn->data;
+    }
+    
+    bool validate_bst()
+    {
+        return validate_bst_internal(binary_tree<T>::_root);
     }
     
 private:
@@ -482,6 +488,21 @@ private:
         bst_from_sorted_array(sorted, begin, mid);
         bst_from_sorted_array(sorted, mid+1, end);
     }
+    
+    bool validate_bst_internal(const tree_node<T> *root)
+    {
+        if (!root)
+            return true;
+        
+        bool ok = true;
+        if (root->left)
+            ok = (root->data < root->left->data) ? false : validate_bst_internal(root->left);
+        
+        if (root->right)
+            ok = (root->data > root->right->data) ? false : validate_bst_internal(root->right) & ok;
+        
+        return ok;
+    }
 };
 
 void test_trees_and_graphs()
@@ -489,13 +510,14 @@ void test_trees_and_graphs()
     tree_node<int> *r = new tree_node<int>(10);
     r->left = new tree_node<int>(5);
     r->right = new tree_node<int>(15);
-//    r->left->left = new tree_node<int>(4);
-//    r->left->left->left = new tree_node<int>(2);
+    r->left->left = new tree_node<int>(4);
+    r->left->left->left = new tree_node<int>(2);
     
     binary_search_tree<int> btree(r);
     btree.print();
     btree.print_depths();
     std::cout << btree.check_balanced() << std::endl;
+    std::cout << btree.validate_bst() << std::endl;
     
     binary_search_tree<int> btree2;
     btree2.insert(10);
@@ -520,7 +542,8 @@ void test_trees_and_graphs()
     btree3.print_bfs();
     
     btree3.print_depths();
-    std::cout << btree2.check_balanced() << std::endl;
+    std::cout << btree3.check_balanced() << std::endl;
+    std::cout << btree3.validate_bst() << std::endl;
 }
 
 #endif /* trees_and_graphs_h */
