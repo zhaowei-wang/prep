@@ -27,9 +27,10 @@
 		9C18D3882117BA7200475E4A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9C32047A2131D90400F37DF5 /* peak_finding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = peak_finding.h; sourceTree = "<group>"; };
 		9C63D962212FE29F006F4CA3 /* arrays_and_strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = arrays_and_strings.h; sourceTree = "<group>"; };
+		9C8846762156052700FCF5D6 /* graphs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graphs.h; sourceTree = "<group>"; };
 		9CE7E4F02148459F00EA85AD /* linkedlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = linkedlist.h; sourceTree = "<group>"; };
 		C218B567214C87970081D40F /* queue_and_stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = queue_and_stack.h; sourceTree = "<group>"; };
-		C218B56821502F9E0081D40F /* trees_and_graphs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees_and_graphs.h; sourceTree = "<group>"; };
+		C218B56821502F9E0081D40F /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +68,8 @@
 				9C32047A2131D90400F37DF5 /* peak_finding.h */,
 				9CE7E4F02148459F00EA85AD /* linkedlist.h */,
 				C218B567214C87970081D40F /* queue_and_stack.h */,
-				C218B56821502F9E0081D40F /* trees_and_graphs.h */,
+				C218B56821502F9E0081D40F /* trees.h */,
+				9C8846762156052700FCF5D6 /* graphs.h */,
 			);
 			path = prep;
 			sourceTree = "<group>";

@@ -16,7 +16,8 @@
 #include "peak_finding.h"
 #include "linkedlist.h"
 #include "queue_and_stack.h"
-#include "trees_and_graphs.h"
+#include "trees.h"
+#include "graphs.h"
 
 void longest_word_in_string()
 {
@@ -149,7 +150,8 @@ int main(int argc, const char * argv[]) {
 //    test_stack();
 //    test_set_of_stacks();
 //    test_queue_from_stacks();
-    test_trees_and_graphs();
+//    test_trees();
+    test_graphs();
     
     return 0;
 }

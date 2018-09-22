@@ -6,8 +6,8 @@
 //  Copyright © 2018 Zhaowei Wang. All rights reserved.
 //
 
-#ifndef trees_and_graphs_h
-#define trees_and_graphs_h
+#ifndef trees_h
+#define trees_h
 
 #include <vector>
 #include <unordered_map>
@@ -484,7 +484,7 @@ private:
     }
 };
 
-void test_trees_and_graphs()
+void test_trees()
 {
     tree_node<int> *r = new tree_node<int>(10);
     r->left = new tree_node<int>(5);
@@ -523,4 +523,4 @@ void test_trees_and_graphs()
     std::cout << btree2.check_balanced() << std::endl;
 }
 
-#endif /* trees_and_graphs_h */
+#endif /* trees_h */
