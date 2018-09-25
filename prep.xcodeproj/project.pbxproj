@@ -28,6 +28,7 @@
 		9C32047A2131D90400F37DF5 /* peak_finding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = peak_finding.h; sourceTree = "<group>"; };
 		9C63D962212FE29F006F4CA3 /* arrays_and_strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = arrays_and_strings.h; sourceTree = "<group>"; };
 		9C8846762156052700FCF5D6 /* graphs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graphs.h; sourceTree = "<group>"; };
+		9CD3D771215A14170093EAE6 /* bits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bits.h; sourceTree = "<group>"; };
 		9CE7E4F02148459F00EA85AD /* linkedlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = linkedlist.h; sourceTree = "<group>"; };
 		C218B567214C87970081D40F /* queue_and_stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = queue_and_stack.h; sourceTree = "<group>"; };
 		C218B56821502F9E0081D40F /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
@@ -72,6 +73,7 @@
 				C218B56821502F9E0081D40F /* trees.h */,
 				9C8846762156052700FCF5D6 /* graphs.h */,
 				C2CA47F6215754D200365297 /* heap.h */,
+				9CD3D771215A14170093EAE6 /* bits.h */,
 			);
 			path = prep;
 			sourceTree = "<group>";
