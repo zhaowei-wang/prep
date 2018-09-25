@@ -149,6 +149,11 @@ public:
         return is_subtree;
     }
     
+    size_t number_of_paths_for_sum(int n)
+    {
+         return number_of_paths_for_sum_internal(_root, n);
+    }
+    
 protected:
     tree_node<T> *_root;
     
@@ -268,6 +273,42 @@ private:
             ok = ok & check_equality(a->right, b->right);
         }
         return ok;
+    }
+    
+    size_t number_of_paths_for_sum_internal(tree_node<T> *root, int target_sum)
+    {
+        if (!root)
+            return 0;
+        
+        size_t result = num_paths_for_sum_at_root(root, target_sum, 0);
+        result += number_of_paths_for_sum_internal(root->left, target_sum);
+        result += number_of_paths_for_sum_internal(root->right, target_sum);
+        
+        return result;
+    }
+    
+    size_t num_paths_for_sum_at_root(tree_node<T> *root, int target_sum, int partial_sum)
+    {
+        if (!root)
+            return 0;
+        
+        size_t num_paths = 0;
+        auto check_current_path_sum = [=] (tree_node<T> *r)
+        {
+            return partial_sum + r->data == target_sum;
+        };
+        
+        auto update_num_paths = [&] (tree_node<T> *r)
+        {
+            num_paths++;
+        };
+        
+        pre_order_traversal(root, update_num_paths, check_current_path_sum);
+        
+        num_paths += num_paths_for_sum_at_root(root->left, target_sum, partial_sum + root->data);
+        num_paths += num_paths_for_sum_at_root(root->right, target_sum, partial_sum + root->data);
+        
+        return num_paths;
     }
     
     // copies a to b
@@ -616,6 +657,21 @@ void test_trees()
     std::cout << ok6 << std::endl;
     std::cout << ok7 << std::endl;
     std::cout << ok8 << std::endl;
+    
+    tree_node<int> *root = new tree_node<int>(10);
+    root->left = new tree_node<int>(-1);
+    root->right = new tree_node<int>(-1);
+    root->left->left = new tree_node<int>(-4);
+    root->left->right = new tree_node<int>(5);
+    root->left->right->left = new tree_node<int>(-5);
+    root->left->left->left = new tree_node<int>(13);
+    root->right->left = new tree_node<int>(12);
+    
+    binary_tree<int> btree5(root);
+    btree5.print();
+    btree5.print_depths();
+    int n = 9;
+    std::cout << "# ways to sum to " << n << " = " << btree5.number_of_paths_for_sum(n) << std::endl;
 }
 
 #endif /* trees_h */
