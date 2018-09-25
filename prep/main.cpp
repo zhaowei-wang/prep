@@ -151,9 +151,9 @@ int main(int argc, const char * argv[]) {
 //    test_stack();
 //    test_set_of_stacks();
 //    test_queue_from_stacks();
-//    test_trees();
+    test_trees();
 //    test_graphs();
-    test_heap();
+//    test_heap();
     
     return 0;
 }

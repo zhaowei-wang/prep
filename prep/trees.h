@@ -34,7 +34,10 @@ class binary_tree
 {
 public:
     binary_tree() : _root(nullptr) {}
-    binary_tree(tree_node<T> *r) : _root(r) {}
+    binary_tree(tree_node<T> *r)
+    {
+        copy_tree(r, _root);
+    }
     
     binary_tree(const binary_tree& tree)
     {
@@ -58,6 +61,11 @@ public:
         };
         
         post_order_traversal(_root, f, p);
+    }
+    
+    bool operator==(const binary_tree &a)
+    {
+        return check_equality(_root, a._root);
     }
     
     void print()
@@ -119,6 +127,26 @@ public:
     {
         int n = 0;
         return check_balanced_internal(_root, n);
+    }
+    
+    bool is_subtree(binary_tree sub)
+    {
+        bool is_subtree = false;
+        
+        auto check_root = [=] (tree_node<T> *r)
+        {
+            return (r->data == sub._root->data);
+        };
+        
+        auto check_is_subtree = [&] (tree_node<T> *r)
+        {
+            if (r->data == sub._root->data)
+                is_subtree = check_equality(sub._root, r);
+        };
+        
+        pre_order_traversal(_root, check_is_subtree, check_root);
+        
+        return is_subtree;
     }
     
 protected:
@@ -222,6 +250,24 @@ private:
             s += ls + rs + 1;
             return true;
         }
+    }
+    
+    bool check_equality(const tree_node<T> *a, const tree_node<T> *b)
+    {
+        if (!a && !b)
+            return true;
+        
+        if ((!a && b) || (!b && a))
+            return false;
+        
+        bool ok = false;
+        if (a->data == b->data)
+        {
+            ok = true;
+            ok = check_equality(a->left, b->left);
+            ok = ok & check_equality(a->right, b->right);
+        }
+        return ok;
     }
     
     // copies a to b
@@ -518,7 +564,7 @@ void test_trees()
     btree.print_depths();
     std::cout << btree.check_balanced() << std::endl;
     std::cout << btree.validate_bst() << std::endl;
-    
+
     binary_search_tree<int> btree2;
     btree2.insert(10);
     btree2.insert(5);
@@ -526,24 +572,50 @@ void test_trees()
     btree2.insert(4);
     btree2.insert(2);
     btree2.print();
-    
+
     std::cout << btree.find(3) << std::endl;
-    
+
 //    btree2.remove(2);
 //    btree2.print();
-    
+
     std::cout << btree2.next_largest(10) << std::endl;
     std::cout << btree2.next_smallest(10) << std::endl;
-    
+
     btree2.print_bfs();
-    
+
     std::vector<int> sorted = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     binary_search_tree<int> btree3(sorted);
     btree3.print_bfs();
-    
+
     btree3.print_depths();
     std::cout << btree3.check_balanced() << std::endl;
     std::cout << btree3.validate_bst() << std::endl;
+
+    binary_search_tree<int> btree_copy(btree);
+
+    bool ok1 = btree == btree_copy;
+    bool ok2 = btree_copy == btree;
+    bool ok3 = btree == btree3;
+    bool ok4 = btree.is_subtree(btree_copy);
+    bool ok5 = btree_copy.is_subtree(btree);
+
+    btree_copy.insert(29);
+    bool ok6 = btree_copy.is_subtree(btree);
+    
+    tree_node<int> *rr = new tree_node<int>(13);
+    rr->left = r;
+    binary_search_tree<int> btree4(rr);
+    bool ok7 = btree4.is_subtree(btree);
+    bool ok8 = btree.is_subtree(btree4);
+    
+    std::cout << ok1 << std::endl;
+    std::cout << ok2 << std::endl;
+    std::cout << ok3 << std::endl;
+    std::cout << ok4 << std::endl;
+    std::cout << ok5 << std::endl;
+    std::cout << ok6 << std::endl;
+    std::cout << ok7 << std::endl;
+    std::cout << ok8 << std::endl;
 }
 
 #endif /* trees_h */
