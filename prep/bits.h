@@ -9,13 +9,8 @@
 #ifndef bits_h
 #define bits_h
 
-# include <bitset>
-
-// set bit
-// clear bit
-// toggle bit
-// check bit
-// changing nth bit to x
+#include <bitset>
+#include <deque>
 
 int set_bit(int a, int n)
 {
@@ -35,6 +30,12 @@ int toggle_bit(int a, int n)
 int update_bit_to(int a, int n, bool pred)
 {
     return (pred) ? set_bit(a, n) : clear_bit(a, n);
+}
+
+bool check_bit(int a, int n)
+{
+    int mask = 1 << (n-1);
+    return !((a & mask) == 0);
 }
 
 // clears all MSB to nth bit
@@ -86,6 +87,75 @@ int insertion(int n, int m, int j, int i)
  
  */
 
+void print_binary(double d)
+{
+    int d_int = d;
+    
+    std::deque<int> whole_part_remainders;
+    while (d_int > 0)
+    {
+        whole_part_remainders.push_front(d_int % 2);
+        d_int /= 2;
+    }
+    
+    std::deque<int> fraction_part_remainders;
+    size_t precision = sizeof(int) * 8;
+    size_t i = 0;
+    double d_curr = d - (int)d;
+    while (i < precision - whole_part_remainders.size())
+    {
+        d_curr *= 2;
+        fraction_part_remainders.push_back((int)d_curr % 2);
+        ++i;
+    }
+    
+    std::cout << d << " equals = ";
+    for (const auto& v : whole_part_remainders)
+        std::cout << v;
+    std::cout << ".";
+    for (const auto& v : fraction_part_remainders)
+        std::cout << v;
+    std::cout << std::endl;
+}
+
+/*
+ 
+ Flip Bit to Win: You have an integer and you can flip exactly one bit from a 0 to a 1.Write code to find the length of the longest sequence of ls you could create.
+ EXAMPLE
+ Input: 1775 (11011101111) Output: 8
+ 
+ */
+
+size_t flip_bit_to_win(int n)
+{
+    size_t max_size = sizeof(int) * 8;
+    bool saw_zero = false;
+    size_t curr_seq_len = 0;
+    size_t longest_seq = 1;
+    for (int i = 1; i <= max_size; ++i)
+    {
+        bool is_one = check_bit(n, i);
+        if (is_one)
+        {
+            ++curr_seq_len;
+        }
+        else if (!is_one && saw_zero)
+        {
+            saw_zero = false;
+            curr_seq_len = 0;
+        }
+        else
+        {
+            saw_zero = true;
+            ++curr_seq_len;
+        }
+        
+        if (longest_seq < curr_seq_len)
+            longest_seq = curr_seq_len;
+    }
+    return longest_seq;
+}
+
 void test_bits()
 {
     std::bitset<sizeof(int) * 8> x(set_bit(0, 5));
@@ -119,6 +189,12 @@ void test_bits()
     
     x = insertion(15, (1 << 20) + 3, 10, 7);
     std::cout << x << std::endl;
+    
+    print_binary(2.0/3.0);
+    
+    std::cout << check_bit(4, 3) << std::endl;
+    
+    std::cout << flip_bit_to_win(1 << 2) << std::endl;
 }
 
 #endif /* bits_h */
