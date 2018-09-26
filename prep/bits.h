@@ -142,7 +142,7 @@ size_t flip_bit_to_win(int n)
         else if (!is_one && saw_zero)
         {
             saw_zero = false;
-            curr_seq_len = 0;
+            curr_seq_len = 1;
         }
         else
         {
@@ -194,7 +194,7 @@ void test_bits()
     
     std::cout << check_bit(4, 3) << std::endl;
     
-    std::cout << flip_bit_to_win(1 << 2) << std::endl;
+    std::cout << flip_bit_to_win(1775) << std::endl;
 }
 
 #endif /* bits_h */
