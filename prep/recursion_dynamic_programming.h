@@ -162,6 +162,52 @@ int magic_index(std::vector<int> v)
  Power Set: Write a method to return all subsets of a set.
  */
 
+// |S| = 1
+// {}, {a1}
+// |S| = 2
+// {}, {a1}, {a2}, {a1, a2} = P(1) + (P(1)U{a2})
+
+void power_set_internal(const std::vector<int> &v,
+                        std::vector<std::vector<int>> &subsets,
+                        int n)
+{
+    if (n < 0)
+    {
+        subsets.push_back(std::vector<int>());
+        return;
+    }
+    
+    power_set_internal(v, subsets, n-1);
+    
+    std::vector<std::vector<int>> nth_subsets;
+    for (const auto& subset : subsets)
+    {
+        int val = v.at(n);
+        std::vector<int> curr_subset = subset;
+        curr_subset.push_back(val);
+        nth_subsets.push_back(curr_subset);
+    }
+    subsets.insert(subsets.end(), nth_subsets.begin(), nth_subsets.end());
+}
+
+void power_set(const std::vector<int> &v)
+{
+    std::vector<std::vector<int>> subsets;
+    power_set_internal(v, subsets, v.size()-1);
+    
+    for (const auto &subset : subsets)
+    {
+        std::cout << "{";
+        for (const auto &val : subset)
+            std::cout << val << ",";
+        std::cout << "}" << std::endl;
+    }
+}
+
+/*
+ Recursive Multiply: Write a recursive function to multiply two positive integers without using the * operator (or / operator). You can use addition, subtraction, and bit shifting, but you should minimize the number of those operations.
+ */
+
 void test_rdp()
 {
     int n = 10;
@@ -188,6 +234,10 @@ void test_rdp()
     std::cout << "magic index = " << std::endl;
     int ret = magic_index(v);
     std::cout << ret << std::endl;
+    
+    std::cout << "power set" << std::endl;
+    std::vector<int> vv = {0, 1, 2, 3};
+    power_set(vv);
 }
 
 #endif /* recursion_dynamic_programming_h */
