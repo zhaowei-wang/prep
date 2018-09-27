@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <utility>
+#include <algorithm>
 
 /*
  Triple Step: A child is running up a staircase with n steps and can hop either 1 step, 2 steps, or 3 steps at a time. Implement a method to count how many possible ways the child can run up the stairs.
@@ -115,7 +116,29 @@ void robot_in_a_grid(const grid2d &grid)
  What if the values are not distinct?
  */
 
-size_t magic_index(std::vector<int> v)
+int binary_search_for_magic_index(std::vector<int> &v, int i, int j)
+{
+    if (i == j)
+        return (v.at(i) == i) ? i : -1;
+    
+    int n = i + (j-i) / 2;
+    
+    std::cout << "(" << i << "," << j << "," << n << ")" << std::endl;
+    
+    if (v.at(n) == n)
+        return n;
+    else if (v.at(n) > n)
+        return binary_search_for_magic_index(v, i, n);
+    else
+        return binary_search_for_magic_index(v, n+1, j);
+}
+
+int magic_index_distinct(std::vector<int> v)
+{
+    return binary_search_for_magic_index(v, 0, v.size());
+}
+
+int magic_index(std::vector<int> v)
 {
     return 0;
 }
@@ -136,6 +159,16 @@ void test_rdp()
     grid_set(grid, 1, 1, false);
     print_grid(grid);
     robot_in_a_grid(grid);
+    
+    std::cout << "looking for magic index in:" << std::endl;
+    std::vector<int> v = {-10, 9, 8, 1, 1, 1, 3, 20, 15};
+    std::sort(v.begin(), v.end());
+    for (const auto& ele : v)
+        std::cout << ele << " ";
+    std::cout << std::endl;
+    std::cout << "magic index = " << std::endl;
+    int ret = magic_index_distinct(v);
+    std::cout << ret << std::endl;
 }
 
 #endif /* recursion_dynamic_programming_h */
