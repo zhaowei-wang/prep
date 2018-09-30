@@ -205,8 +205,23 @@ void power_set(const std::vector<int> &v)
 }
 
 /*
- Recursive Multiply: Write a recursive function to multiply two positive integers without using the * operator (or / operator). You can use addition, subtraction, and bit shifting, but you should minimize the number of those operations.
+ Coins: Given an infinite number of quarters (25 cents), dimes (10 cents), nickels (5 cents), and
+ pennies (1 cent), write code to calculate the number of ways of representing n cents.
  */
+
+int coins(int n, const std::vector<int> &denoms)
+{
+    if (n < 0)
+        return 0;
+    if (n == 0)
+        return 1;
+    
+    int ret = 0;
+    for (const auto& denom : denoms)
+        ret += coins(n - denom, denoms);
+    
+    return ret;
+}
 
 void test_rdp()
 {
@@ -238,6 +253,10 @@ void test_rdp()
     std::cout << "power set" << std::endl;
     std::vector<int> vv = {0, 1, 2, 3};
     power_set(vv);
+    
+    std::vector<int> denoms = {1, 5, 10, 25};
+    int value = 11;
+    std::cout << "# ways to count " << value << " is " << coins(value, denoms) << std::endl;
 }
 
 #endif /* recursion_dynamic_programming_h */
