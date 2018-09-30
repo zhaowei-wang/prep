@@ -21,6 +21,7 @@
 #include "heap.h"
 #include "bits.h"
 #include "recursion_dynamic_programming.h"
+#include "concurrency.h"
 
 void longest_word_in_string()
 {
@@ -157,7 +158,8 @@ int main(int argc, const char * argv[]) {
 //    test_graphs();
 //    test_heap();
 //    test_bits();
-    test_rdp();
+//    test_rdp();
+    test_concurrency();
 
     return 0;
 }
