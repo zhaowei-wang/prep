@@ -11,7 +11,6 @@
 #include <vector>
 #include <unordered_map>
 
-
 #include "arrays_and_strings.h"
 #include "peak_finding.h"
 #include "linkedlist.h"
