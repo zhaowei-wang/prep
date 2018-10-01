@@ -205,8 +205,51 @@ void power_set(const std::vector<int> &v)
 }
 
 /*
- Recursive Multiply: Write a recursive function to multiply two positive integers without using the * operator (or / operator). You can use addition, subtraction, and bit shifting, but you should minimize the number of those operations.
+ Towers of Hanoi: In the classic problem of the Towers of Hanoi, you have 3 towers and N disks of different sizes which can slide onto any tower.The puzzle starts with disks sorted in ascending order of size from top to bottom (Le., each disk sits on top of an even larger one). You have the following constraints:
+     (1) Only one disk can be moved at a time.
+     (2) A disk is slid off the top of one tower onto another tower.
+     (3) A disk cannot be placed on top of a smaller disk.
+     Write a program to move the disks from the first tower to the last using Stacks.
  */
+
+void hanoi(int n, std::vector<int> &source, std::vector<int> &destination, std::vector<int> &buffer)
+{
+    if (n < 0)
+        return;
+    
+    hanoi(n-1, source, buffer, destination);
+    destination.push_back(source.back());
+    source.pop_back();
+    hanoi(n-1, buffer, destination, source);
+}
+
+/*
+ Permutations without Dups: Write a method to compute all permutations of a string of unique characters.
+ */
+
+void string_perm_internal(std::string current, std::string left, std::vector<std::string> &all)
+{
+    if (left.length() == 0)
+    {
+        all.push_back(current);
+        return;
+    }
+    
+    for (size_t i = 0; i < left.length(); ++i)
+    {
+        std::string s = left;
+        string_perm_internal(current + left.at(i), s.erase(i,1), all);
+    }
+}
+
+void string_permutations(std::string s)
+{
+    std::vector<std::string> all;
+    string_perm_internal("", s, all);
+    std::cout << "Printing all permutations of " << s << std::endl;
+    for (const auto& ss : all)
+        std::cout << ss << std::endl;
+}
 
 void test_rdp()
 {
@@ -238,6 +281,30 @@ void test_rdp()
     std::cout << "power set" << std::endl;
     std::vector<int> vv = {0, 1, 2, 3};
     power_set(vv);
+    
+    std::cout << "hanoi" << std::endl;
+    std::vector<int> a, b, c;
+    a = {5, 4, 3, 2, 1};
+    
+    std::cout << "initial state" << std::endl;
+    for (auto const &ele : a)
+        std::cout << ele << " ";
+    std::cout << std::endl;
+    
+    for (auto const &ele : c)
+        std::cout << ele << " ";
+    std::cout << std::endl;
+    hanoi(a.size() - 1, a, c, b);
+    std::cout << "final state" << std::endl;
+    for (auto const &ele : a)
+        std::cout << ele << " ";
+    std::cout << std::endl;
+    
+    for (auto const &ele : c)
+        std::cout << ele << " ";
+    std::cout << std::endl;
+    
+    string_permutations("abcd");
 }
 
 #endif /* recursion_dynamic_programming_h */

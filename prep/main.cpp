@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <assert.h>
 
 
 #include "arrays_and_strings.h"
@@ -157,7 +158,7 @@ int main(int argc, const char * argv[]) {
 //    test_graphs();
 //    test_heap();
 //    test_bits();
-    test_rdp();
+//    test_rdp();
     
     return 0;
 }
