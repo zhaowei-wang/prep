@@ -14,7 +14,7 @@
 #include <ctime>
 #include <pthread.h>
 
-#define NUM_THREADS 2
+#define NUM_THREADS 4
 
 static int sum = 0;
 pthread_mutex_t sum_mutex;
@@ -36,7 +36,7 @@ struct dot_product
     {
         T ret = 0;
         for (size_t i = 0; i < a->size(); ++i)
-            ret += a->at(i) * b->at(i);
+            ret += (*a)[i] * (*b)[i];
         return ret;
     }
     
@@ -44,7 +44,7 @@ struct dot_product
     {
         T ret = 0;
         for (size_t i = begin; i < end; ++i)
-            ret += a->at(i) * b->at(i);
+            ret += (*a)[i] * (*b)[i];
         return ret;
     }
 };
@@ -130,12 +130,12 @@ void concurrent_dot_product(std::vector<int> *a, std::vector<int> *b)
 void singlethread_dot_product(std::vector<int> *a, std::vector<int> *b)
 {
     for (size_t i = 0; i < a->size(); ++i)
-        sum += a->at(i) * b->at(i);
+        sum += (*a)[i] * (*b)[i];
 }
 
 void test_concurrency()
 {
-    int N = 1000017;
+    int N = 1000000017;
     std::vector<int> ones(N, 1);
     clock_t t1, t2;
     
