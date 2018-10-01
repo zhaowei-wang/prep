@@ -14,7 +14,7 @@
 #include <ctime>
 #include <pthread.h>
 
-#define NUM_THREADS 10
+#define NUM_THREADS 2
 
 static int sum = 0;
 pthread_mutex_t sum_mutex;
@@ -23,20 +23,20 @@ pthread_mutex_t sum_mutex;
 template <class T>
 struct dot_product
 {
-    std::vector<T> a;
-    std::vector<T> b;
+    std::vector<T> *a;
+    std::vector<T> *b;
     
-    dot_product(std::vector<T> a, std::vector<T> b)
+    dot_product(std::vector<T> *a, std::vector<T> *b)
     : a(a), b(b)
     {
-        assert(a.size() == b.size());
+        assert(a->size() == b->size());
     }
     
     T operator()()
     {
         T ret = 0;
-        for (size_t i = 0; i < a.size(); ++i)
-            ret += a.at(i) * b.at(i);
+        for (size_t i = 0; i < a->size(); ++i)
+            ret += a->at(i) * b->at(i);
         return ret;
     }
     
@@ -44,7 +44,7 @@ struct dot_product
     {
         T ret = 0;
         for (size_t i = begin; i < end; ++i)
-            ret += a.at(i) * b.at(i);
+            ret += a->at(i) * b->at(i);
         return ret;
     }
 };
@@ -55,37 +55,41 @@ struct dot_product_job
     dot_product<T> *prod;
     size_t begin;
     size_t end;
+    T result;
     
     dot_product_job() {}
     dot_product_job(dot_product<T> *prod, size_t b, size_t e)
-    : prod(prod), begin(b), end(e) {}
+    : prod(prod), begin(b), end(e), result(0) {}
     
-    T operator()()
+    void operator()()
     {
-        return (*prod)(begin, end);
+        result = (*prod)(begin, end);
     }
 };
 
 void * dot_product_entry_point(void *arg)
 {
     dot_product_job<int> *job = (dot_product_job<int> *) arg;
+    (*job)();
     
     pthread_mutex_lock(&sum_mutex);
-    sum += (*job)();
+    sum += job->result;
     pthread_mutex_unlock(&sum_mutex);
     
     pthread_exit(nullptr);
     return nullptr;
 }
 
-void concurrent_dot_product(std::vector<int> a, std::vector<int> b)
+void concurrent_dot_product(std::vector<int> *a, std::vector<int> *b)
 {
+    clock_t t1, t2;
+    t1 = clock();
     pthread_t threads[NUM_THREADS];
     int rc;
     long t, start, end, step_size;
     start = 0;
     end = 0;
-    step_size = a.size() / NUM_THREADS;
+    step_size = a->size() / NUM_THREADS;
     
     dot_product_job<int> jobs[NUM_THREADS];
     dot_product<int> *prod = new dot_product<int>(a, b);
@@ -97,7 +101,10 @@ void concurrent_dot_product(std::vector<int> a, std::vector<int> b)
         end = (t + 1) * step_size;
         jobs[t] = dot_product_job<int>(prod, start, end);
     }
+    t2 = clock();
+    std::cout << "Thread setup time = " << ((double) t2 - t1) / CLOCKS_PER_SEC << std::endl;
     
+    t1 = clock();
     for (t = 0; t < NUM_THREADS; ++t)
     {
         rc = pthread_create(&threads[t], nullptr, dot_product_entry_point, &jobs[t]);
@@ -113,26 +120,28 @@ void concurrent_dot_product(std::vector<int> a, std::vector<int> b)
     }
     
     // handle the leftover of the array due to round-down, if any
-    sum += (*prod)(step_size * NUM_THREADS, a.size());
+    sum += (*prod)(step_size * NUM_THREADS, a->size());
+    t2 = clock();
+    std::cout << "All thread computation time = " << ((double) t2 - t1) / CLOCKS_PER_SEC << std::endl;
     
     delete prod;
 }
 
-void singlethread_dot_product(std::vector<int> a, std::vector<int> b)
+void singlethread_dot_product(std::vector<int> *a, std::vector<int> *b)
 {
-    for (size_t i = 0; i < a.size(); ++i)
-        sum += a.at(i) * b.at(i);
+    for (size_t i = 0; i < a->size(); ++i)
+        sum += a->at(i) * b->at(i);
 }
 
 void test_concurrency()
 {
-    int N = 100000017;
+    int N = 1000017;
     std::vector<int> ones(N, 1);
     clock_t t1, t2;
     
     sum = 0;
     t1 = clock();
-    concurrent_dot_product(ones, ones);
+    concurrent_dot_product(&ones, &ones);
     t2 = clock();
     
     std::cout << "Dot product = " << sum << std::endl;
@@ -141,7 +150,7 @@ void test_concurrency()
     
     sum = 0;
     t1 = clock();
-    singlethread_dot_product(ones, ones);
+    singlethread_dot_product(&ones, &ones);
     t2 = clock();
     
     std::cout << "Dot product = " << sum << std::endl;
