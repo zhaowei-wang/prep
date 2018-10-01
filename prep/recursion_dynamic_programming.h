@@ -205,6 +205,7 @@ void power_set(const std::vector<int> &v)
 }
 
 /*
+<<<<<<< HEAD
  Towers of Hanoi: In the classic problem of the Towers of Hanoi, you have 3 towers and N disks of different sizes which can slide onto any tower.The puzzle starts with disks sorted in ascending order of size from top to bottom (Le., each disk sits on top of an even larger one). You have the following constraints:
      (1) Only one disk can be moved at a time.
      (2) A disk is slid off the top of one tower onto another tower.
@@ -249,6 +250,25 @@ void string_permutations(std::string s)
     std::cout << "Printing all permutations of " << s << std::endl;
     for (const auto& ss : all)
         std::cout << ss << std::endl;
+}
+
+/*
+ Coins: Given an infinite number of quarters (25 cents), dimes (10 cents), nickels (5 cents), and
+ pennies (1 cent), write code to calculate the number of ways of representing n cents.
+ */
+
+int coins(int n, const std::vector<int> &denoms)
+{
+    if (n < 0)
+        return 0;
+    if (n == 0)
+        return 1;
+    
+    int ret = 0;
+    for (const auto& denom : denoms)
+        ret += coins(n - denom, denoms);
+    
+    return ret;
 }
 
 void test_rdp()
@@ -305,6 +325,10 @@ void test_rdp()
     std::cout << std::endl;
     
     string_permutations("abcd");
+
+    std::vector<int> denoms = {1, 5, 10, 25};
+    int value = 11;
+    std::cout << "# ways to count " << value << " is " << coins(value, denoms) << std::endl;
 }
 
 #endif /* recursion_dynamic_programming_h */

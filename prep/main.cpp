@@ -12,7 +12,6 @@
 #include <unordered_map>
 #include <assert.h>
 
-
 #include "arrays_and_strings.h"
 #include "peak_finding.h"
 #include "linkedlist.h"
@@ -22,6 +21,7 @@
 #include "heap.h"
 #include "bits.h"
 #include "recursion_dynamic_programming.h"
+#include "concurrency.h"
 
 void longest_word_in_string()
 {
@@ -159,7 +159,7 @@ int main(int argc, const char * argv[]) {
 //    test_heap();
 //    test_bits();
 //    test_rdp();
-    
+    test_concurrency();
     return 0;
 }
 

@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		9C18D3852117BA7200475E4A /* prep */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = prep; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C18D3882117BA7200475E4A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		9C203A6F216176E500278619 /* concurrency.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = concurrency.h; sourceTree = "<group>"; };
 		9C32047A2131D90400F37DF5 /* peak_finding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = peak_finding.h; sourceTree = "<group>"; };
 		9C63D962212FE29F006F4CA3 /* arrays_and_strings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = arrays_and_strings.h; sourceTree = "<group>"; };
 		9C8846762156052700FCF5D6 /* graphs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = graphs.h; sourceTree = "<group>"; };
@@ -76,6 +77,7 @@
 				C2CA47F6215754D200365297 /* heap.h */,
 				9CD3D771215A14170093EAE6 /* bits.h */,
 				9C884677215B49DE00FCF5D6 /* recursion_dynamic_programming.h */,
+				9C203A6F216176E500278619 /* concurrency.h */,
 			);
 			path = prep;
 			sourceTree = "<group>";
