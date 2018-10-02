@@ -11,13 +11,20 @@
 
 #include <vector>
 #include <assert.h>
-#include <ctime>
 #include <pthread.h>
+#include <sys/time.h>
 
 #define NUM_THREADS 4
 
 static int sum = 0;
 pthread_mutex_t sum_mutex;
+
+uint64_t get_time()
+{
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);
+    return tv.tv_sec * 1000000 + tv.tv_usec;
+}
 
 // functor that contains work for concurrent dot product
 template <class T>
@@ -82,8 +89,6 @@ void * dot_product_entry_point(void *arg)
 
 void concurrent_dot_product(std::vector<int> *a, std::vector<int> *b)
 {
-    clock_t t1, t2;
-    t1 = clock();
     pthread_t threads[NUM_THREADS];
     int rc;
     long t, start, end, step_size;
@@ -101,10 +106,7 @@ void concurrent_dot_product(std::vector<int> *a, std::vector<int> *b)
         end = (t + 1) * step_size;
         jobs[t] = dot_product_job<int>(prod, start, end);
     }
-    t2 = clock();
-    std::cout << "Thread setup time = " << ((double) t2 - t1) / CLOCKS_PER_SEC << std::endl;
-    
-    t1 = clock();
+
     for (t = 0; t < NUM_THREADS; ++t)
     {
         rc = pthread_create(&threads[t], nullptr, dot_product_entry_point, &jobs[t]);
@@ -121,8 +123,6 @@ void concurrent_dot_product(std::vector<int> *a, std::vector<int> *b)
     
     // handle the leftover of the array due to round-down, if any
     sum += (*prod)(step_size * NUM_THREADS, a->size());
-    t2 = clock();
-    std::cout << "All thread computation time = " << ((double) t2 - t1) / CLOCKS_PER_SEC << std::endl;
     
     delete prod;
 }
@@ -137,24 +137,24 @@ void test_concurrency()
 {
     int N = 1000000017;
     std::vector<int> ones(N, 1);
-    clock_t t1, t2;
+    uint64_t t1, t2;
     
     sum = 0;
-    t1 = clock();
+    t1 = get_time();
     concurrent_dot_product(&ones, &ones);
-    t2 = clock();
+    t2 = get_time();
     
     std::cout << "Dot product = " << sum << std::endl;
     std::cout << "# threads = " << NUM_THREADS << std::endl;
-    std::cout << "Concurrent dot product time: " << ((double)(t2-t1)) / CLOCKS_PER_SEC << "s." << std::endl;
+    std::cout << "Concurrent dot product time: " << ((double)(t2-t1)) / 1000000.0 << "s." << std::endl;
     
     sum = 0;
-    t1 = clock();
+    t1 = get_time();
     singlethread_dot_product(&ones, &ones);
-    t2 = clock();
+    t2 = get_time();
     
     std::cout << "Dot product = " << sum << std::endl;
-    std::cout << "Single-threaded dot product time: " << ((double)(t2-t1)) / CLOCKS_PER_SEC << "s." << std::endl;
+    std::cout << "Single-threaded dot product time: " << ((double)(t2-t1)) / 1000000.0 << "s." << std::endl;
 }
 
 #endif /* concurrency_h */
